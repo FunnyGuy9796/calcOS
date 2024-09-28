@@ -7,7 +7,6 @@ AS = nasm
 # Output binaries and final image
 MBR_BIN = mbr.bin
 LOADER_BIN = loader.bin
-TEST_BIN = test.bin
 KERNEL_OBJ = kernel.o
 KERNEL_BIN = kernel.bin
 IMAGE = bootable.img
@@ -15,7 +14,7 @@ IMAGE = bootable.img
 # NASM and GCC flags
 ASFLAGS = -f bin
 CFLAGS = -ffreestanding -c
-LDFLAGS = -T linker.ld --oformat binary -e kmain
+LDFLAGS = -T linker.ld --oformat binary
 
 # Targets
 all: $(IMAGE)

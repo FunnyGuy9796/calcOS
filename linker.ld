@@ -1,9 +1,9 @@
 OUTPUT_FORMAT("binary")
-ENTRY(kmain)
+ENTRY(main)
 
 SECTIONS
 {
-    . = 0x1000;
+    . = 0x7e00;
 
     .text : {
         *(.text)

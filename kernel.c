@@ -1,4 +1,4 @@
-void kmain() {
+void main() {
     char* video_memory = (char*) 0xB8000;
     char* message = "Welcome to calcOS";
     int i = 0;

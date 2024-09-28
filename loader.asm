@@ -6,7 +6,7 @@ start:
     xor ax, ax
     mov ss, ax
     mov sp, 0x7c00
-    mov ax, 0x1000
+    mov ax, 0x8000
     mov ds, ax
     sti
 
@@ -24,7 +24,7 @@ start:
     mov dh, 0
     mov cl, 3
     mov dl, 0x80
-    mov bx, 0x1000
+    mov bx, 0x7e00
     int 0x13
 
     jc read_error
@@ -37,7 +37,7 @@ start:
     mov al, 'e'
     int 0x10
 
-    jmp 0x1000
+    jmp 0x7e00
 
 read_error:
     mov ah, 0x0e
