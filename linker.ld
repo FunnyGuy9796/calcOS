@@ -1,16 +1,19 @@
-OUTPUT_FORMAT("binary")
 ENTRY(main)
 
 SECTIONS
 {
-    . = 0x7e00;
+    . = 0x8000;
 
     .text : {
-        *(.text)
+        *(.text*)
     }
 
     .data : {
         *(.data)
+    }
+
+    .rodata : {
+        *(.rodata*)
     }
 
     .bss : {
