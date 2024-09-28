@@ -2,21 +2,19 @@
 CROSS_COMPILE = $(HOME)/opt/cross/bin/i686-elf-
 CC = $(CROSS_COMPILE)gcc
 LD = $(CROSS_COMPILE)ld
-OBJCOPY = $(CROSS_COMPILE)objcopy
 AS = nasm
 
 # Output binaries and final image
 MBR_BIN = mbr.bin
 LOADER_BIN = loader.bin
 KERNEL_OBJ = kernel.o
-KERNEL_ELF = kernel.elf
 KERNEL_BIN = kernel.bin
 IMAGE = bootable.img
 
 # NASM and GCC flags
 ASFLAGS = -f bin
-CFLAGS = -g -O3 -ffreestanding -fno-asynchronous-unwind-tables -fno-pic -c
-LDFLAGS = -no-pie -nostdlib -T linker.ld
+CFLAGS = -ffreestanding -c
+LDFLAGS = -T linker.ld --oformat binary
 
 # Targets
 all: $(IMAGE)
@@ -35,14 +33,12 @@ $(KERNEL_OBJ): kernel.c
 
 # Link the kernel
 $(KERNEL_BIN): $(KERNEL_OBJ)
-	$(LD) $(LDFLAGS) -o $(KERNEL_ELF) $(KERNEL_OBJ)
-	$(OBJCOPY) -O binary $(KERNEL_ELF) $(KERNEL_BIN)
+	$(LD) $(LDFLAGS) -o $(KERNEL_BIN) $(KERNEL_OBJ)
 
-# Create a 1.44MiB bootable image by concatenating the MBR, loader, and kernel
+# Create the bootable image by concatenating the MBR, loader, and kernel
 $(IMAGE): $(MBR_BIN) $(LOADER_BIN) $(KERNEL_BIN)
 	cat $(MBR_BIN) $(LOADER_BIN) $(KERNEL_BIN) > $(IMAGE)
-	truncate -s 1440K $(IMAGE)
 
 # Clean up generated files
 clean:
-	rm -f *.bin *.elf *.o $(IMAGE)
+	rm -f *.bin *.o $(IMAGE)
