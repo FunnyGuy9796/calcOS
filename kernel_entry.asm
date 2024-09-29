@@ -1,4 +1,4 @@
-section .entry progbits alloc exec nowrite align=1
+section .entry progbits alloc exec nowrite align=16
 
 extern kmain
 global kernel_entry
