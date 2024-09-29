@@ -39,9 +39,6 @@ start:
     jmp CODE32_PL0_SEL:pm32_enter
                                ; Enter 32-bit protected mode. Set CS
 
-    cld                        ; Ensure string processing is forward (DF=0)
-    jmp 0x8000                 ; Jump to kernel
-
 read_error:
     mov ah, 0x0e
     mov al, ' '
@@ -60,8 +57,8 @@ pm32_enter:
     mov ss, eax
     movzx esp, sp              ; Zero extend 16-bit stack pointer to 32-bits
 
+    cld                        ; Ensure string processing is forward (DF=0)
     jmp 0x8000                 ; Jump to kernel
-
 
 ; Macro to build a GDT descriptor entry
 %define MAKE_GDT_DESC(base, limit, access, flags)  \
