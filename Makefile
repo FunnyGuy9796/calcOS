@@ -8,6 +8,7 @@ AS = nasm
 # Output binaries and final image
 MBR_BIN = mbr.bin
 LOADER_BIN = loader.bin
+KENTRY_OBJ = kernel_entry.o
 KERNEL_OBJ = kernel.o
 KERNEL_ELF = kernel.elf
 KERNEL_BIN = kernel.bin
@@ -33,9 +34,12 @@ $(LOADER_BIN): loader.asm
 $(KERNEL_OBJ): kernel.c
 	$(CC) $(CFLAGS) kernel.c -o $(KERNEL_OBJ)
 
+$(KENTRY_OBJ): kernel_entry.asm
+	$(AS) -f elf32 kernel_entry.asm -o $(KENTRY_OBJ)
+
 # Link the kernel
-$(KERNEL_BIN): $(KERNEL_OBJ)
-	$(LD) $(LDFLAGS) -o $(KERNEL_ELF) $(KERNEL_OBJ)
+$(KERNEL_BIN): $(KERNEL_OBJ) $(KENTRY_OBJ)
+	$(LD) $(LDFLAGS) -o $(KERNEL_ELF) $(KERNEL_OBJ) $(KENTRY_OBJ)
 	$(OBJCOPY) -O binary $(KERNEL_ELF) $(KERNEL_BIN)
 
 # Create a 1.44MiB bootable image by concatenating the MBR, loader, and kernel

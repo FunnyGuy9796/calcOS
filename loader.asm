@@ -57,7 +57,6 @@ pm32_enter:
     mov ss, eax
     movzx esp, sp              ; Zero extend 16-bit stack pointer to 32-bits
 
-    cld                        ; Ensure string processing is forward (DF=0)
     jmp 0x8000                 ; Jump to kernel
 
 ; Macro to build a GDT descriptor entry
