@@ -1,18 +1,19 @@
 gdt_start:
-    dq 0
+    dq 0x0000000000000000
+
     dw 0xffff
-    dw 0x0000
+    dw 0x9000
     db 0x00
     db 10011010b
     db 11001111b
-    dw 0x0000
+    dw 0x00
 
     dw 0xffff
-    dw 0x0000
+    dw 0x9000
     db 0x00
     db 10010010b
     db 11001111b
-    dw 0x0000
+    dw 0x00
 gdt_end:
 
 gdtr:
@@ -22,14 +23,6 @@ gdtr:
 enter_protected_mode:
     cli
     lgdt [gdtr]
-
-    mov ax, 0x10
-    mov ds, ax
-    mov es, ax
-    mov fs, ax
-    mov gs, ax
-    mov ss, ax
-    mov esp, 0x9fff
 
     mov eax, cr0
     or eax, 1

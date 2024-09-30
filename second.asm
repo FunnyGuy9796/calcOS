@@ -38,11 +38,16 @@ vga_buffer equ 0xb8000
 protected_mode:
     mov ax, 0x10
     mov ds, ax
+    mov es, ax
+    mov fs, ax
+    mov gs, ax
+    mov ss, ax
+    mov esp, 0xa000
     
     mov si, pmode_s_msg
     call print_32_string
 
-    jmp hang
+    jmp $
 
 print_32_string:
     mov ebx, vga_buffer
