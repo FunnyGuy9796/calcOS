@@ -2,6 +2,21 @@
 [org 0x7c00]
 
 .start:
+    ; Bootloader should set segments it intends to use to the expected
+    ; value.
+    ;
+    xor ax, ax
+    mov ds, ax
+    mov es, ax
+    mov ss, ax
+    mov sp, 0x7c00             ; Set initial stack (SS:SP) somehwere we know we
+                               ;     we won't write on top with a disk read like
+                               ;     placing it at 0x0000:0x7c00 grows down
+                               ;     below the bootloader and won't be
+                               ;     clobbered by by our disk reads
+
+    cld                        ; Ensure string processing is forward (DF=0)
+                               ;     for isntructions like LODS, MOVS, CMPS
     mov si, msg
     call print_string
 
