@@ -3,15 +3,12 @@
 
 start:
     cli
-    
+
     mov si, msg
     call print_string
 
     call enable_a20_fast
     call enter_protected_mode
-
-hang:
-    jmp hang
 
 print_string:
     mov ah, 0x0e
@@ -36,18 +33,23 @@ a20_e_msg db 'E:A20 ', 0
 vga_buffer equ 0xb8000
 
 protected_mode:
+    ; You need to set the protected mode selectors
+    ; once you are in protected mode
     mov ax, 0x10
     mov ds, ax
     mov es, ax
     mov fs, ax
     mov gs, ax
     mov ss, ax
-    mov esp, 0xa000
-    
-    mov si, pmode_s_msg
+    mov esp, 0xa000      ; For performance stack should be DWORD aligned
+
+    mov ah, 0x0f         ; Set bright white on black
+    mov esi, pmode_s_msg ; Need to set ESI not SI
+                         ; now that we're in 32-bit protected mode
     call print_32_string
 
-    jmp $
+hang:                    ; Move the jmp hang code into the [bits32] code
+    jmp hang
 
 print_32_string:
     mov ebx, vga_buffer

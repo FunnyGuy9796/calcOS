@@ -2,18 +2,18 @@ gdt_start:
     dq 0x0000000000000000
 
     dw 0xffff
-    dw 0x9000
+    dw 0x0000
     db 0x00
     db 10011010b
     db 11001111b
-    dw 0x00
+    db 0x00            ; DB, not DW. GDT entries are exactly 8 bytes in size
 
     dw 0xffff
-    dw 0x9000
+    dw 0x0000
     db 0x00
     db 10010010b
     db 11001111b
-    dw 0x00
+    db 0x00            ; DB, not DW. GDT entries are exactly 8 bytes in size
 gdt_end:
 
 gdtr:
