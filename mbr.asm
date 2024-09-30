@@ -5,7 +5,7 @@
     ; Bootloader should set segments it intends to use to the expected
     ; value.
     ;
-    xor ax, ax
+    xor ax, ax                 ; DS=ES=SS=0
     mov ds, ax
     mov es, ax
     mov ss, ax
