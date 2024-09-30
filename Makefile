@@ -1,44 +1,35 @@
-# Paths and tools
-CROSS_COMPILE = $(HOME)/opt/cross/bin/i686-elf-
-CC = $(CROSS_COMPILE)gcc
-LD = $(CROSS_COMPILE)ld
-AS = nasm
-
-# Output binaries and final image
+MBR_SRC = mbr.asm
+SECOND_SRC = second.asm
 MBR_BIN = mbr.bin
-LOADER_BIN = loader.bin
-KERNEL_OBJ = kernel.o
-KERNEL_BIN = kernel.bin
-IMAGE = bootable.img
+SECOND_BIN = second.bin
+DISK_IMG = calcOS.img
 
-# NASM and GCC flags
-ASFLAGS = -f bin
-CFLAGS = -ffreestanding -c
-LDFLAGS = -T linker.ld --oformat binary
+NASM = nasm
+NASM_FLAGS = -f bin
 
-# Targets
-all: $(IMAGE)
+QEMU = qemu-system-x86_64
 
-# Assemble the MBR
-$(MBR_BIN): mbr.asm
-	$(AS) $(ASFLAGS) mbr.asm -o $(MBR_BIN)
+DD = dd
 
-# Assemble the second-stage loader
-$(LOADER_BIN): loader.asm
-	$(AS) $(ASFLAGS) loader.asm -o $(LOADER_BIN)
+DISK_SIZE = 10M
 
-# Compile the kernel C file
-$(KERNEL_OBJ): kernel.c
-	$(CC) $(CFLAGS) kernel.c -o $(KERNEL_OBJ)
+$(MBR_BIN): $(MBR_SRC)
+	$(NASM) $(NASM_FLAGS) $(MBR_SRC) -o $(MBR_BIN)
 
-# Link the kernel
-$(KERNEL_BIN): $(KERNEL_OBJ)
-	$(LD) $(LDFLAGS) -o $(KERNEL_BIN) $(KERNEL_OBJ)
+$(SECOND_BIN): $(SECOND_SRC)
+	$(NASM) $(NASM_FLAGS) $(SECOND_SRC) -o $(SECOND_BIN)
 
-# Create the bootable image by concatenating the MBR, loader, and kernel
-$(IMAGE): $(MBR_BIN) $(LOADER_BIN) $(KERNEL_BIN)
-	cat $(MBR_BIN) $(LOADER_BIN) $(KERNEL_BIN) > $(IMAGE)
+$(DISK_IMG): $(MBR_BIN) $(SECOND_BIN)
+	qemu-img create -f raw $(DISK_IMG) $(DISK_SIZE)
 
-# Clean up generated files
+	$(DD) if=$(MBR_BIN) of=$(DISK_IMG) bs=512 count=1 conv=notrunc
+
+	$(DD) if=$(SECOND_BIN) of=$(DISK_IMG) bs=512 count=1 seek=1 conv=notrunc
+
+run: $(DISK_IMG)
+	$(QEMU) -drive format=raw,file=$(DISK_IMG)
+
 clean:
-	rm -f *.bin *.o $(IMAGE)
+	rm -f $(MBR_BIN) $(SECOND_BIN) $(DISK_IMG)
+
+.PHONY: run clean

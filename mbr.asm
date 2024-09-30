@@ -1,33 +1,47 @@
-bits 16
-org 0x7c00
+[bits 16]
+[org 0x7c00]
 
-start:
+.start:
+    mov si, msg
+    call print_string
+
+    mov bx, 0x9000
+    call load_second
+
+    jmp 0x9000
+
+hang:
+    jmp hang
+
+print_string:
     mov ah, 0x0e
-    mov al, 'S'
+.print_char:
+    lodsb
+    cmp al, 0
+    je done
     int 0x10
-    mov al, '1'
-    int 0x10
+    jmp .print_char
+done:
+    ret
 
+load_second:
     mov ah, 0x02
     mov al, 1
     mov ch, 0
-    mov dh, 0
     mov cl, 2
+    mov dh, 0
     mov dl, 0x80
-    mov bx, 0x8000
     int 0x13
+    jc disk_error
+    ret
 
-    jc read_error
+disk_error:
+    mov si, error_msg
+    call print_string
+    jmp hang
 
-    jmp 0x8000
+msg db 'B:S1 ', 0
+error_msg db 'E:DR ', 0
 
-read_error:
-    mov ah, 0x0e
-    mov al, ' '
-    int 0x10
-    mov al, 'E'
-    int 0x10
-    hlt
-    
 times 510 - ($ - $$) db 0
-dw 0xaa55
+db 0x55, 0xaa
