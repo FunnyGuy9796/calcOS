@@ -9,7 +9,7 @@ uint16_t vga_entry(char ch, uint8_t color) {
     return (uint16_t)ch | (uint16_t)color << 8;
 }
 
-void kmain(void) {
+void __attribute__((section(".text.entry"))) kmain(void) {
     vga_buffer[0] = vga_entry('A', WHITE_ON_BLACK);
 
     while (1) {}

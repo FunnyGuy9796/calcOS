@@ -9,7 +9,9 @@ start:
 
     call enable_a20_fast
 
-    mov bx, 0x10000
+    push 0x10000
+    pop es
+    mov bx, 0x0
     call load_kernel
 
     call enter_protected_mode
@@ -29,7 +31,7 @@ load_kernel:
     mov ah, 0x02
     mov al, 9
     mov ch, 0
-    mov cl, 2
+    mov cl, 3
     mov dh, 0
     mov dl, 0x80
     int 0x13
@@ -68,9 +70,7 @@ protected_mode:
     mov esi, pmode_s_msg
     call print_32_string
 
-    jmp 0x08:0x10000
-    
-    jmp hang
+    jmp 0x10000
 
 print_32_string:
     mov ebx, vga_buffer
