@@ -17,7 +17,7 @@ GCC = $(HOME)/opt/cross/bin/i686-elf-gcc
 GCC_FLAGS = -ffreestanding -m32
 
 LD = $(HOME)/opt/cross/bin/i686-elf-ld
-LD_FLAGS = -Ttext 0x10000 -m elf_i386 --oformat binary
+LD_FLAGS = -Tlinker.ld -m elf_i386 --oformat binary
 
 QEMU = qemu-system-x86_64
 
@@ -37,7 +37,7 @@ $(KERNEL_OBJ): $(KERNEL_SRC)
 $(KERNEL_BIN): $(KERNEL_OBJ)
 	$(LD) $(LD_FLAGS) $(KERNEL_OBJ) -o $(KERNEL_BIN)
 
-$(DISK_IMG): $(MBR_BIN) $(SECOND_BIN)
+$(DISK_IMG): $(MBR_BIN) $(SECOND_BIN) $(KERNEL_BIN)
 	qemu-img create -f raw $(DISK_IMG) $(DISK_SIZE)
 
 	$(DD) if=$(MBR_BIN) of=$(DISK_IMG) bs=512 count=1 conv=notrunc

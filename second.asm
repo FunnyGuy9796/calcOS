@@ -9,7 +9,11 @@ start:
 
     call enable_a20_fast
 
-    mov bx, 0x10000
+    push 0x1000
+    pop es                     ; ES=0x1000
+    mov bx, 0x0                ; BX=0x0000
+    ; Int13h/AH=2 disk read to ES:BX. ES:BX=0x1000:0x0000
+    ; (ES<<4)+BX = (0x1000<<4)+0x0000 = phys address 0x10000
     call load_kernel
 
     call enter_protected_mode
@@ -29,7 +33,7 @@ load_kernel:
     mov ah, 0x02
     mov al, 9
     mov ch, 0
-    mov cl, 2
+    mov cl, 3
     mov dh, 0
     mov dl, 0x80
     int 0x13
@@ -68,9 +72,9 @@ protected_mode:
     mov esi, pmode_s_msg
     call print_32_string
 
-    jmp 0x08:0x10000
+    jmp 0x10000                 ; Previously set CS to 0x08
+                                ;     don't need to do it again
     
-    jmp hang
 
 print_32_string:
     mov ebx, vga_buffer

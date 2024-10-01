@@ -9,7 +9,10 @@ uint16_t vga_entry(char ch, uint8_t color) {
     return (uint16_t)ch | (uint16_t)color << 8;
 }
 
-void kmain(void) {
+/* Add .text.entry before all other sections in linker script
+ * and ensure that kmain is the first code in kernel.bin
+ * at 0x10000 */
+void __attribute__((section(".text.entry"))) kmain(void) {
     vga_buffer[0] = vga_entry('A', WHITE_ON_BLACK);
 
     while (1) {}
