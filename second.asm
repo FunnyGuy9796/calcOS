@@ -9,7 +9,7 @@ start:
 
     call enable_a20_fast
 
-    push 0x10000
+    push 0x1000
     pop es
     mov bx, 0x0
     call load_kernel
@@ -70,7 +70,7 @@ protected_mode:
     mov esi, pmode_s_msg
     call print_32_string
 
-    jmp 0x10000
+    jmp 0x08:0x10000
 
 print_32_string:
     mov ebx, vga_buffer
