@@ -66,7 +66,13 @@ protected_mode:
     mov gs, ax
     mov ss, ax
     mov esp, 0x90000
-    
+
+fpu_init:
+    mov eax,cr0            ; eax = CR0
+    and al,~6              ; clear the EM and MP flags (just in case)
+    mov cr0,eax            ; set CR0
+    fninit
+
     mov esi, pmode_s_msg
     call print_32_string
 
