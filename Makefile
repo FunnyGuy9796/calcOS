@@ -1,12 +1,12 @@
 MBR_SRC = mbr.asm
 SECOND_SRC = second.asm
-KERNEL_SRC = kernel.c
+KERNEL_SRC = $(wildcard *.c)
 
 MBR_BIN = mbr.bin
 SECOND_BIN = second.bin
 KERNEL_BIN = kernel.bin
 
-KERNEL_OBJ = kernel.o
+KERNEL_OBJ = $(KERNEL_SRC:.c=.o)
 
 DISK_IMG = calcOS.img
 
@@ -31,8 +31,8 @@ $(MBR_BIN): $(MBR_SRC)
 $(SECOND_BIN): $(SECOND_SRC)
 	$(NASM) $(NASM_FLAGS) $(SECOND_SRC) -o $(SECOND_BIN)
 
-$(KERNEL_OBJ): $(KERNEL_SRC)
-	$(GCC) $(GCC_FLAGS) -c $(KERNEL_SRC) -o $(KERNEL_OBJ)
+%.o: %.c
+	$(GCC) $(GCC_FLAGS) -c $< -o $@
 
 $(KERNEL_BIN): $(KERNEL_OBJ)
 	$(LD) $(LD_FLAGS) $(KERNEL_OBJ) -o $(KERNEL_BIN)
