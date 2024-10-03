@@ -24,6 +24,7 @@ void __attribute__((section(".text.entry"))) kmain(void) {
     printf("\n\n\n----------------------------------SYSTEM INFO:----------------------------------\n");
     printf("Kernel address: %#x\n", boot_info->kernel_address);
 
+    // Currently not receiving the kernel address correctly (currently getting 0x1)
     if (boot_info->kernel_address == 0x10000) {
         printf("SUCCESS");
     }
