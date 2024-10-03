@@ -147,7 +147,8 @@ void vga_putfloat(double value, int precision) {
     vga_update_cursor();
 }
 
-void vga_puthex(unsigned int value, bool uppercase) {
+void vga_puthex(unsigned int value, bool uppercase, bool prefix) {
+    uint8_t color = vga_color(vga_fg, vga_bg);
     const char* hex_digits = uppercase ? "0123456789ABCDEF" : "0123456789abcdef";
 
     char buffer[9];
@@ -158,9 +159,13 @@ void vga_puthex(unsigned int value, bool uppercase) {
         buffer[index--] = '0';
     }
 
-    while (index >= 0) {
+    while (value > 0 && index >= 0) {
         buffer[index--] = hex_digits[value % 16];
         value /= 16;
+    }
+
+    if (prefix) {
+        vga_puts(uppercase ? "0X" : "0x");
     }
 
     vga_puts(&buffer[index + 1]);
@@ -177,10 +182,16 @@ void printf(const char* format, ...) {
             vga_col = 0;
         }
 
+        bool prefix = false;
+        int precision = 6;
+
         if (*format == '%') {
             format++;
 
-            int precision = 6;
+            if (*format == '#') {
+                prefix = true;
+                format++;
+            }
 
             if (*format == '0') {
                 format++;
@@ -207,10 +218,10 @@ void printf(const char* format, ...) {
                 vga_putfloat(float_value, precision);
             } else if (*format == 'x') {
                 unsigned int hex_value = va_arg(args, unsigned int);
-                vga_puthex(hex_value, false);
+                vga_puthex(hex_value, false, prefix);
             } else if (*format == 'X') {
                 unsigned int hex_value = va_arg(args, unsigned int);
-                vga_puthex(hex_value, true);
+                vga_puthex(hex_value, true, prefix);
             }
         } else {
             if (*format != '\n') {

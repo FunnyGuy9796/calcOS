@@ -1,6 +1,11 @@
 [bits 16]
 [org 0x9000]
 
+BOOT_INFO_ADDRESS equ 0x9500
+KERNEL_ADDRESS equ 0x10000
+
+MAGIC_NUMBER equ 0xf00d
+
 start:
     cli
     
@@ -8,6 +13,9 @@ start:
     call print_string
 
     call enable_a20_fast
+
+    mov word [BOOT_INFO_ADDRESS], MAGIC_NUMBER
+    mov dword [BOOT_INFO_ADDRESS + 2], KERNEL_ADDRESS
 
     push 0x1000
     pop es
@@ -45,6 +53,7 @@ disk_error:
 
 %include "a20.asm"
 %include "protected.asm"
+%include "fpu.asm"
 
 msg db 'B:S2 ', 0
 a20_s_msg db 'A20:OK ', 0
@@ -70,7 +79,9 @@ protected_mode:
     mov esi, pmode_s_msg
     call print_32_string
 
-    jmp 0x08:0x10000
+    call check_fpu
+
+    jmp 0x08:KERNEL_ADDRESS
 
 print_32_string:
     mov ebx, vga_buffer
