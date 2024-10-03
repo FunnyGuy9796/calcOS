@@ -8,7 +8,7 @@
 typedef struct {
     unsigned short magic;
     unsigned int kernel_address;
-} boot_info_t;
+} __attribute__((packed)) boot_info_t;
 
 extern boot_info_t *boot_info;
 

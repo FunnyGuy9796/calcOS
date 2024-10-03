@@ -14,7 +14,7 @@ NASM = nasm
 NASM_FLAGS = -f bin
 
 GCC = $(HOME)/opt/cross/bin/i686-elf-gcc
-GCC_FLAGS = -ffreestanding -m32
+GCC_FLAGS = -ffreestanding -m32 -O0
 
 LD = $(HOME)/opt/cross/bin/i686-elf-ld
 LD_FLAGS = -Tlinker.ld -m elf_i386 --oformat binary

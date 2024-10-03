@@ -1,11 +1,6 @@
 [bits 16]
 [org 0x9000]
 
-BOOT_INFO_ADDRESS equ 0x9500
-KERNEL_ADDRESS equ 0x10000
-
-MAGIC_NUMBER equ 0xf00d
-
 start:
     cli
     
@@ -13,9 +8,6 @@ start:
     call print_string
 
     call enable_a20_fast
-
-    mov word [BOOT_INFO_ADDRESS], MAGIC_NUMBER
-    mov dword [BOOT_INFO_ADDRESS + 2], KERNEL_ADDRESS
 
     push 0x1000
     pop es
@@ -62,6 +54,12 @@ disk_e_msg db 'E:DR', 0
 
 [bits 32]
 
+BOOT_INFO_ADDRESS equ 0x9500
+KERNEL_ADDRESS equ 0x10000
+RANDOM_DATA equ 0x1234
+
+MAGIC_NUMBER equ 0xf00d
+
 vga_buffer equ 0xb8000
 
 hang:
@@ -75,6 +73,17 @@ protected_mode:
     mov gs, ax
     mov ss, ax
     mov esp, 0x90000
+
+    mov word [BOOT_INFO_ADDRESS], MAGIC_NUMBER
+    mov dword [BOOT_INFO_ADDRESS + 2], KERNEL_ADDRESS
+
+    mov ax, [BOOT_INFO_ADDRESS]
+    cmp ax, MAGIC_NUMBER
+    jne info_error
+
+    mov eax, [BOOT_INFO_ADDRESS + 2]
+    cmp eax, KERNEL_ADDRESS
+    jne info_error
     
     mov esi, pmode_s_msg
     call print_32_string
@@ -96,6 +105,12 @@ print_32_string:
 .done:
     ret
 
+info_error:
+    mov esi, binfo_e_msg
+    call print_32_string
+    jmp $
+
 pmode_s_msg db 'Protected Mode... [OK] ', 0
+binfo_e_msg db 'E:BI', 0
 
 times 510 - ($ - $$) db 0

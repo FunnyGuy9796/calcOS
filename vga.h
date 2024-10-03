@@ -54,4 +54,6 @@ void vga_putfloat(double value, int precision);
 
 void printf(const char* format, ...);
 
+void panic(const char* format, ...);
+
 #endif

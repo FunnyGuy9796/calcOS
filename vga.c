@@ -241,3 +241,19 @@ void printf(const char* format, ...) {
 
     va_end(args);
 }
+
+void panic(const char* format, ...) {
+    va_list args;
+    va_start(args, format);
+
+    vga_clear();
+
+    vga_bg = VGA_COLOR_RED;
+
+    printf("PANIC: ");
+    printf(format, args);
+
+    vga_bg = VGA_COLOR_BLUE;
+
+    va_end(args);
+}

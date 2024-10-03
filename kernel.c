@@ -11,9 +11,7 @@ void __attribute__((section(".text.entry"))) kmain(void) {
     vga_clear();
 
     if (boot_info->magic != 0xf00d) {
-        vga_bg = VGA_COLOR_RED;
-
-        printf("ERROR: Invalid boot information\n");
+        panic("INVALID BOOTLOADER INFORMATION\n");
 
         while (1) {}
     }
@@ -23,11 +21,6 @@ void __attribute__((section(".text.entry"))) kmain(void) {
 
     printf("\n\n\n----------------------------------SYSTEM INFO:----------------------------------\n");
     printf("Kernel address: %#x\n", boot_info->kernel_address);
-
-    // Currently not receiving the kernel address correctly (currently getting 0x1)
-    if (boot_info->kernel_address == 0x10000) {
-        printf("SUCCESS");
-    }
 
     while (1) {}
 }
