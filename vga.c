@@ -157,18 +157,25 @@ void vga_puthex(unsigned int value, bool uppercase, bool prefix) {
 
     if (value == 0) {
         buffer[index--] = '0';
-    }
-
-    while (value > 0 && index >= 0) {
-        buffer[index--] = hex_digits[value % 16];
-        value /= 16;
+    } else {
+        while (value > 0 && index >= 0) {
+            buffer[index--] = hex_digits[value % 16];
+            value /= 16;
+        }
     }
 
     if (prefix) {
         vga_puts(uppercase ? "0X" : "0x");
     }
 
-    vga_puts(&buffer[index + 1]);
+    if (!prefix) {
+        for (int i = 0; i <= index; i++) {
+            buffer[i] = '0';
+        }
+        vga_puts(buffer);
+    } else {
+        vga_puts(&buffer[index + 1]);
+    }
 }
 
 void printf(const char* format, ...) {

@@ -14,6 +14,8 @@ start:
     mov bx, 0x0
     call load_kernel
 
+    call get_mmap
+
     call enter_protected_mode
 
 print_string:
@@ -46,6 +48,7 @@ disk_error:
 %include "a20.asm"
 %include "protected.asm"
 %include "fpu.asm"
+%include "mmap.asm"
 
 msg db 'B:S2 ', 0
 a20_s_msg db 'A20:OK ', 0
@@ -54,9 +57,8 @@ disk_e_msg db 'E:DR', 0
 
 [bits 32]
 
-BOOT_INFO_ADDRESS equ 0x9500
+BOOT_INFO_ADDRESS equ 0x8000
 KERNEL_ADDRESS equ 0x10000
-RANDOM_DATA equ 0x1234
 
 MAGIC_NUMBER equ 0xf00d
 
@@ -112,5 +114,3 @@ info_error:
 
 pmode_s_msg db 'Protected Mode... [OK] ', 0
 binfo_e_msg db 'E:BI', 0
-
-times 510 - ($ - $$) db 0

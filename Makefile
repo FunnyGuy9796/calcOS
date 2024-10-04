@@ -47,7 +47,7 @@ $(DISK_IMG): $(MBR_BIN) $(SECOND_BIN) $(KERNEL_BIN)
 	$(DD) if=$(KERNEL_BIN) of=$(DISK_IMG) bs=512 seek=2 conv=notrunc
 
 run: $(DISK_IMG)
-	$(QEMU) -drive format=raw,file=$(DISK_IMG)
+	$(QEMU) -m 1024 -drive format=raw,file=$(DISK_IMG)
 
 clean:
 	rm -f $(MBR_BIN) $(SECOND_BIN) $(KERNEL_BIN) $(KERNEL_OBJ) $(DISK_IMG)

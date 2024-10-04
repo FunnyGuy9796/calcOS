@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 
-#define BOOT_INFO_ADDRESS 0x9500
+#define BOOT_INFO_ADDRESS 0x8000
 
 typedef struct {
     unsigned short magic;
