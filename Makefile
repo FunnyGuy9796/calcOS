@@ -1,5 +1,6 @@
 MBR_SRC = mbr.asm
 SECOND_SRC = second.asm
+
 KERNEL_SRC = $(wildcard *.c)
 
 MBR_BIN = mbr.bin
@@ -50,6 +51,6 @@ run: $(DISK_IMG)
 	$(QEMU) -m 1024 -drive format=raw,file=$(DISK_IMG)
 
 clean:
-	rm -f $(MBR_BIN) $(SECOND_BIN) $(KERNEL_BIN) $(KERNEL_OBJ) $(DISK_IMG)
+	rm -f $(MBR_BIN) $(SECOND_BIN) $(KERNEL_BIN) $(KERNEL_OBJ) $(IDT_OBJ) $(DISK_IMG)
 
 .PHONY: run clean

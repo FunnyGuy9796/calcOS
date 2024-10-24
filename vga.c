@@ -42,6 +42,25 @@ void vga_clear() {
     vga_update_cursor();
 }
 
+void vga_scroll() {
+    uint8_t color = vga_color(vga_fg, vga_bg);
+
+    if (vga_row >= VGA_HEIGHT) {
+        for (int row = 1; row < VGA_HEIGHT; row++) {
+            for (int col = 0; col < VGA_WIDTH; col++) {
+                vga_text_buffer[(row - 1) * VGA_WIDTH + col] = vga_text_buffer[row * VGA_WIDTH + col];
+            }
+        }
+
+        for (int col = 0; col < VGA_WIDTH; col++) {
+            vga_text_buffer[(VGA_HEIGHT - 1) * VGA_WIDTH + col] = vga_entry(' ', color);
+        }
+
+        vga_row = VGA_HEIGHT - 1;
+        vga_col = 0;
+    }
+}
+
 void vga_puts(const char* str) {
     uint8_t color = vga_color(vga_fg, vga_bg);
 
@@ -189,6 +208,8 @@ void printf(const char* format, ...) {
             vga_col = 0;
         }
 
+        vga_scroll();
+
         bool prefix = false;
         int precision = 6;
 
@@ -229,6 +250,9 @@ void printf(const char* format, ...) {
             } else if (*format == 'X') {
                 unsigned int hex_value = va_arg(args, unsigned int);
                 vga_puthex(hex_value, true, prefix);
+            } else if (*format == 'u') {
+                uint32_t uint_value = va_arg(args, uint32_t);
+                vga_putint(uint_value);
             }
         } else {
             if (*format != '\n') {
@@ -242,25 +266,11 @@ void printf(const char* format, ...) {
         }
 
         format++;
+
+
     }
 
     vga_update_cursor();
-
-    va_end(args);
-}
-
-void panic(const char* format, ...) {
-    va_list args;
-    va_start(args, format);
-
-    vga_clear();
-
-    vga_bg = VGA_COLOR_RED;
-
-    printf("PANIC: ");
-    printf(format, args);
-
-    vga_bg = VGA_COLOR_BLUE;
 
     va_end(args);
 }

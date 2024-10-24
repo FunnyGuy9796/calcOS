@@ -24,8 +24,8 @@ next_entry:
     cmp eax, 0x534D4150
     jne mmap_done
 
-    mov cx, [es:di + 8]
-    or cx, [es:di + 12]
+    mov eax, [es:di + 8]
+    or eax, [es:di + 12]
     jz skip_entry
 
     inc bp

@@ -10,17 +10,22 @@ void __attribute__((section(".text.entry"))) kmain(void) {
     struct mmap_entry* mmap = get_mmap();
 
     vga_bg = VGA_COLOR_BLUE;
-
     vga_clear();
 
     if (boot_info->magic != 0xf00d) {
-        panic("INVALID BOOTLOADER INFORMATION: %#x\n", boot_info->magic);
+        vga_clear();
+        vga_bg = VGA_COLOR_RED;
+
+        printf("INVALID BOOTLOADER INFORMATION: %#x\n", boot_info->magic);
 
         while (1) {}
     }
 
     if (mmap_count <= 0) {
-        panic("NO MEMORY MAP ENTRIES FOUND");
+        vga_clear();
+        vga_bg = VGA_COLOR_RED;
+
+        printf("NO MEMORY MAP ENTRIES FOUND");
 
         while (1) {}
     }

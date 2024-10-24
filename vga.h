@@ -46,6 +46,8 @@ uint16_t vga_entry(char ch, uint8_t color);
 
 void vga_clear();
 
+void vga_scroll();
+
 void vga_puts(const char* str);
 
 void vga_putint(int value);
@@ -53,7 +55,5 @@ void vga_putint(int value);
 void vga_putfloat(double value, int precision);
 
 void printf(const char* format, ...);
-
-void panic(const char* format, ...);
 
 #endif
